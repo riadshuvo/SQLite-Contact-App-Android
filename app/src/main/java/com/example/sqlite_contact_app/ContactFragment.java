@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,12 +20,20 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.sqlite_contact_app.models.Contact;
+import com.example.sqlite_contact_app.utils.UniversalImageLoader;
+
+import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ContactFragment extends Fragment {
     private static final String TAG = "ContactFragment";
 
     private Toolbar toolbar;
     private Contact mContact;
+    private TextView mContactName;
+    private CircleImageView mContactImage;
+    private ListView mListView;
 
     //this will evade the nullpointer exception when adding to new bundle from MainActivity
     public ContactFragment(){
@@ -39,6 +49,8 @@ public class ContactFragment extends Fragment {
         Log.d(TAG, "onCreateView: started");
 
         toolbar = (Toolbar) view.findViewById(R.id.contactToolbar);
+        mContactName = (TextView) view.findViewById(R.id.contactName);
+        mContactImage = (CircleImageView) view.findViewById(R.id.contactImage);
 
         mContact = getContactFromBundle();
 
@@ -49,6 +61,8 @@ public class ContactFragment extends Fragment {
         //Required For Setting up the toolbar
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         setHasOptionsMenu(true);
+
+        init();
 
         ImageView ivBackArrow = (ImageView) view.findViewById(R.id.ivBackArrow);
         ivBackArrow.setOnClickListener(new View.OnClickListener() {
@@ -73,6 +87,15 @@ public class ContactFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void init(){
+        mContactName.setText(mContact.getName());
+        UniversalImageLoader.setImage(mContact.getProfileImage(), mContactImage, null, "http://");
+
+        ArrayList<String> properties = new ArrayList<>();
+        properties.add(mContact.getPhonenumber());
+        properties.add(mContact.getEmail());
     }
 
     @Override
