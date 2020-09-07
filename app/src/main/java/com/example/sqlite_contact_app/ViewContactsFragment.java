@@ -107,6 +107,8 @@ public class ViewContactsFragment extends Fragment {
         }
     }
 
+
+
     private void setUpContactList(){
         final ArrayList<Contact> contacts = new ArrayList<>();
         contacts.add(new Contact("Gary the Guy", "(604) 855-1111", "Mobile","mitch@tabian.ca", testImageURL));
