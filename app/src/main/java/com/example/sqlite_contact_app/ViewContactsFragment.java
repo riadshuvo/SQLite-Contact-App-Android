@@ -1,7 +1,6 @@
 package com.example.sqlite_contact_app;
 
 import android.content.Context;
-import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,10 +15,9 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.sqlite_contact_app.models.Contact;
-import com.example.sqlite_contact_app.utils.CustomListAdapter;
+import com.example.sqlite_contact_app.utils.ContactListAdapter;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -43,7 +41,7 @@ public class ViewContactsFragment extends Fragment {
 
 
     private AppBarLayout viewContactsBar, searchBar;
-    private CustomListAdapter adapter;
+    private ContactListAdapter adapter;
     private ListView contactsList;
     private EditText mSearchContacts;
 
@@ -126,7 +124,7 @@ public class ViewContactsFragment extends Fragment {
         contacts.add(new Contact("Mitch Tabian", "(604) 855-1111", "Mobile","mitch@tabian.ca", testImageURL));
         contacts.add(new Contact("Mitch Tabian", "(604) 855-1111", "Mobile","mitch@tabian.ca", testImageURL));
 
-        adapter = new CustomListAdapter(getActivity(), R.layout.layout_contactslistitem, contacts, "https://");
+        adapter = new ContactListAdapter(getActivity(), R.layout.layout_contactslistitem, contacts, "https://");
         contactsList.setAdapter(adapter);
 
         contactsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
