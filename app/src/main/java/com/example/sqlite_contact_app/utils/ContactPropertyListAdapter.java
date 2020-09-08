@@ -1,6 +1,9 @@
 package com.example.sqlite_contact_app.utils;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +15,13 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.sqlite_contact_app.MainActivity;
 import com.example.sqlite_contact_app.R;
 
 import java.util.List;
 
 public class ContactPropertyListAdapter extends ArrayAdapter<String> {
+    private static final String TAG = "ContactPropertyListAdap";
 
     private LayoutInflater mInflater;
     private List<String> mProperties = null;
@@ -73,7 +78,23 @@ public class ContactPropertyListAdapter extends ArrayAdapter<String> {
         if (property.contains("@")) {
             holder.leftIcon.setImageResource(mContext.getResources().getIdentifier("@drawable/ic_email", null, mContext.getPackageName()));
         } else if ((property.length() != 0)) {
+
             holder.leftIcon.setImageResource(mContext.getResources().getIdentifier("@drawable/ic_phone", null, mContext.getPackageName()));
+
+            //Phone Call..
+            holder.leftIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(((MainActivity)mContext).checkPermission(Init.PHONE_PERMISSIONS)){
+                        Log.d(TAG, "onClick: initiating phone call.....");
+                        Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.fromParts("tel", property,null));
+                        mContext.startActivity(callIntent);
+                    }else {
+                        ((MainActivity)mContext).verifyPermissions(Init.PHONE_PERMISSIONS);
+                    }
+                }
+            });
+
             holder.rightIcon.setImageResource(mContext.getResources().getIdentifier("@drawable/ic_message", null, mContext.getPackageName()));
 
         }
