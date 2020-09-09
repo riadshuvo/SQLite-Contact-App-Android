@@ -13,7 +13,8 @@ import com.example.sqlite_contact_app.models.Contact;
 import com.example.sqlite_contact_app.utils.UniversalImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-public class MainActivity extends AppCompatActivity implements ViewContactsFragment.OnContactSelectedListener {
+public class MainActivity extends AppCompatActivity implements
+        ViewContactsFragment.OnContactSelectedListener, ContactFragment.OnEditContactListener {
     private static final String TAG = "MainActivity";
     private static final int REQUEST_CODE = 1;
 
@@ -32,6 +33,23 @@ public class MainActivity extends AppCompatActivity implements ViewContactsFragm
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, contactFragment);
         transaction.addToBackStack(getString(R.string.contact_fragment));
+        transaction.commit();
+    }
+
+    @Override
+    public void onEditContactSelected(Contact contact) {
+        Log.d(TAG, "onEditContactSelected: contact selected from "
+                + getString(R.string.edit_contact_fragment)
+                + " " + contact.getName());
+
+        EditContactFragment contactFragment = new EditContactFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(getString(R.string.contact), contact);
+        contactFragment.setArguments(bundle);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, contactFragment);
+        transaction.addToBackStack(getString(R.string.edit_contact_fragment));
         transaction.commit();
     }
 
@@ -114,4 +132,6 @@ public class MainActivity extends AppCompatActivity implements ViewContactsFragm
                 break;
         }
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.example.sqlite_contact_app;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ContactFragment extends Fragment {
     private static final String TAG = "ContactFragment";
+
+    public interface OnEditContactListener{
+        public void onEditContactSelected(Contact contact);
+    }
+
+    OnEditContactListener mOnEditContactListener;
 
     private Toolbar toolbar;
     private Contact mContact;
@@ -85,6 +92,10 @@ public class ContactFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: clicked the edit button");
+                /**
+                 * pass the selected Contact to the interface and send it to the MainActivity
+                 */
+                mOnEditContactListener.onEditContactSelected(mContact);
 
             }
         });
@@ -104,6 +115,11 @@ public class ContactFragment extends Fragment {
         mListView.setDivider(null);
     }
 
+    /**
+     * Must have to Override onOptionsItemSelected() and onOptionsItemSelected() function for showing the Menu Item into the Toolbar and performing the MenuBar
+     * @param menu
+     * @param inflater
+     */
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.contact_menu,menu);
@@ -121,6 +137,10 @@ public class ContactFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Retrieve the selected Contact data from the Bundle come from MainActivity
+     * @return
+     */
     private Contact getContactFromBundle(){
         Log.d(TAG, "getContactFromBundle: arguments "+getArguments());
 
@@ -129,6 +149,22 @@ public class ContactFragment extends Fragment {
             return bundle.getParcelable(getString(R.string.contact));
         }else{
             return null;
+        }
+    }
+
+    /**
+     * Must have to Override onAttach() method to avoid
+     * Attempt to invoke interface method 'OnEditContactListener.onEditContactSelected()'
+     * on a null object reference
+     * @param context
+     */
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try {
+            mOnEditContactListener = (OnEditContactListener) getActivity();
+        }catch (Exception e){
+            Log.d(TAG, "onAttach: "+e.getMessage());
         }
     }
 

@@ -93,8 +93,14 @@ public class ViewContactsFragment extends Fragment {
     }
 
 
-    //Attempt to invoke interface method 'ViewContactsFragment$OnContactSelectedListener.OnContactSelectedListener()'
-    // on a null object reference
+
+
+    /**
+     * Must have to Override onAttach() method to avoid
+     * Attempt to invoke interface method 'ViewContactsFragment$OnContactSelectedListener.OnContactSelectedListener()'
+     * on a null object reference
+     * @param context
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -132,7 +138,10 @@ public class ViewContactsFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Log.d(TAG, "onClick: nevigating to "+ getString(R.string.add_contact_fragment));
 
-                //pass the contact to the interface and send it to the MainActivity
+
+                /**
+                 * pass selected the contact to the interface and send it to the MainActivity
+                 */
                 mContactSelectedListener.OnContactSelectedListener(contacts.get(position));
             }
         });
