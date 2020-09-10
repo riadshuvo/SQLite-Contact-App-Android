@@ -1,8 +1,12 @@
 package com.example.sqlite_contact_app;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -12,15 +16,18 @@ import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.example.sqlite_contact_app.models.Contact;
+import com.example.sqlite_contact_app.utils.ChangePhotoDialog;
+import com.example.sqlite_contact_app.utils.Init;
 import com.example.sqlite_contact_app.utils.UniversalImageLoader;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class EditContactFragment extends Fragment {
+public class EditContactFragment extends Fragment implements ChangePhotoDialog.OnPhotoReceivedListener {
     private static final String TAG = "EditContactFragment";
 
     private Contact mContact;
@@ -51,6 +58,10 @@ public class EditContactFragment extends Fragment {
         mContactImage = (CircleImageView) view.findViewById(R.id.contactImage);
         mSelectedDevice = (Spinner) view.findViewById(R.id.selectDevice);
 
+        //Required For Setting up the toolbar
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        setHasOptionsMenu(true);
+
 
         //Get the Contact Information From Bundle
         mContact = getContactFromBundle();
@@ -60,6 +71,7 @@ public class EditContactFragment extends Fragment {
         }
 
 
+        //Navigation to the back arrow
         ImageView ivBackArrow = (ImageView) view.findViewById(R.id.ivBackArrow);
         ivBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +79,52 @@ public class EditContactFragment extends Fragment {
                 Log.d(TAG, "onClick: clicked on back arrow");
                 //remove previous fragment from the backstack (therefore navigating back)
                 getActivity().getSupportFragmentManager().popBackStack();
+
+            }
+        });
+
+        //Save Changes to the Contact Database
+        ImageView ivCheckBox = (ImageView) view.findViewById(R.id.ivCheckMark);
+        ivCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: saving the edited contact");
+                //Execute the save method for database
+
+            }
+        });
+
+        //Opening the Photo selection dialogue box or Phone Camera
+        ImageView ivCamera = (ImageView) view.findViewById(R.id.ivCamera);
+        ivCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                /**
+                 Make sure all permissions have been verified before opening the camera dialog
+                 */
+
+                for(int i = 0; i < Init.PERMISSIONS.length; i++){
+
+                    /**
+                     * Checking Every Single Permission that User has been Approved or Not
+                     */
+                    String[] permission = {Init.PERMISSIONS[i]};
+                    if(((MainActivity)getActivity()).checkPermission(permission)){
+                       if(i == Init.PERMISSIONS.length - 1){
+                           Log.d(TAG, "onClick: Opening the image selection dialogue box");
+
+                           ChangePhotoDialog dialog = new ChangePhotoDialog();
+                           dialog.show(getFragmentManager(), getString(R.string.change_photo_dialog));
+                           dialog.setTargetFragment(EditContactFragment.this,0);
+                       }
+                    }
+
+                    else {
+                        ((MainActivity)getActivity()).verifyPermissions(Init.PERMISSIONS);
+                    }
+                }
+
 
             }
         });
@@ -92,6 +150,29 @@ public class EditContactFragment extends Fragment {
     }
 
     /**
+     * Must have to Override onOptionsItemSelected() and onOptionsItemSelected() function for showing the Menu Item into the Toolbar and performing the MenuBar
+     * @param menu
+     * @param inflater
+     */
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.contact_menu,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.menuitem_delete:
+                Log.d(TAG, "onOptionsItemSelected: deleting contacts");
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    /**
      * Retrieve the selected Contact data from the Bundle come from MainActivity
      * @return
      */
@@ -105,4 +186,22 @@ public class EditContactFragment extends Fragment {
             return null;
         }
     }
+
+
+    /**
+     * Retrieves the selected image from the Bundle coming from ChangePhotoDialog
+     * @param bitmap
+     */
+    @Override
+    public void getBitmapImage(Bitmap bitmap) {
+        Log.d(TAG, "getBitmapImage: got the bitmap: " + bitmap);
+        //get the bitmap from 'ChangePhotoDialog'
+        if(bitmap != null) {
+            //compress the image (if you like)
+            ((MainActivity)getActivity()).compressBitmap(bitmap, 70);
+            mContactImage.setImageBitmap(bitmap);
+        }
+
+    }
+
 }

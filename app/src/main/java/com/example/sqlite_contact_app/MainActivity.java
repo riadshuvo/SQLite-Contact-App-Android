@@ -6,12 +6,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.example.sqlite_contact_app.models.Contact;
 import com.example.sqlite_contact_app.utils.UniversalImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends AppCompatActivity implements
         ViewContactsFragment.OnContactSelectedListener, ContactFragment.OnEditContactListener {
@@ -83,6 +86,20 @@ public class MainActivity extends AppCompatActivity implements
         ImageLoader.getInstance().init(universalImageLoader.getConfig());
 
     }
+
+    /**
+     * Compress a bitmap by the @param "quality"
+     * Quality can be anywhere from 1-100 : 100 being the highest quality.
+     * @param bitmap
+     * @param quality
+     * @return
+     */
+    public Bitmap compressBitmap(Bitmap bitmap, int quality){
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream);
+        return bitmap;
+    }
+
 
     /**
      * Generalized Method for asking permissions. Can pass any array of permissions.
