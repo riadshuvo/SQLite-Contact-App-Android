@@ -189,7 +189,7 @@ public class EditContactFragment extends Fragment implements ChangePhotoDialog.O
 
 
     /**
-     * Retrieves the selected image from the Bundle coming from ChangePhotoDialog
+     * Retrieves the selected image from the Bundle coming from ChangePhotoDialog By Taking Snapshot
      * @param bitmap
      */
     @Override
@@ -202,6 +202,21 @@ public class EditContactFragment extends Fragment implements ChangePhotoDialog.O
             mContactImage.setImageBitmap(bitmap);
         }
 
+    }
+
+    /**
+     * Retrieves the selected image from the Bundle coming from ChangePhotoDialog By Selecting Image From Memory
+     * @param imagePath
+     */
+    @Override
+    public void getImagePath(String imagePath) {
+        Log.d(TAG, "getImagePath: got the image path: " + imagePath);
+
+        if( !imagePath.equals("")){
+            imagePath = imagePath.replace(":/", "://");
+            mSelectedImagePath = imagePath;
+            UniversalImageLoader.setImage(imagePath, mContactImage, null, "");
+        }
     }
 
 }
