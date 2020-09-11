@@ -17,7 +17,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends AppCompatActivity implements
-        ViewContactsFragment.OnContactSelectedListener, ContactFragment.OnEditContactListener {
+        ViewContactsFragment.OnContactSelectedListener,
+        ContactFragment.OnEditContactListener ,
+        ViewContactsFragment.OnAddContactListener {
     private static final String TAG = "MainActivity";
     private static final int REQUEST_CODE = 1;
 
@@ -53,6 +55,19 @@ public class MainActivity extends AppCompatActivity implements
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, contactFragment);
         transaction.addToBackStack(getString(R.string.edit_contact_fragment));
+        transaction.commit();
+    }
+
+
+    @Override
+    public void onAddContact() {
+        Log.d(TAG, "onAddContact: navigating to "+ getString(R.string.add_contact_fragment));;
+
+        AddContactFragment contactFragment = new AddContactFragment();
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, contactFragment);
+        transaction.addToBackStack(getString(R.string.add_contact_fragment));
         transaction.commit();
     }
 
@@ -149,6 +164,5 @@ public class MainActivity extends AppCompatActivity implements
                 break;
         }
     }
-
-
+    
 }

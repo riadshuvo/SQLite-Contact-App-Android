@@ -31,8 +31,12 @@ public class ViewContactsFragment extends Fragment {
     public interface OnContactSelectedListener{
         public void OnContactSelectedListener(Contact contact);
     }
-
     OnContactSelectedListener mContactSelectedListener;
+
+    public interface OnAddContactListener{
+        public void onAddContact();
+    }
+    OnAddContactListener mOnAddContactListener;
 
     private static final int STANDARD_APPBAR = 0;
     private static final int SEARCH_APPBAR = 1;
@@ -67,6 +71,7 @@ public class ViewContactsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: clicked fab");
+                mOnAddContactListener.onAddContact();
             }
         });
 
@@ -106,6 +111,7 @@ public class ViewContactsFragment extends Fragment {
         super.onAttach(context);
         try {
             mContactSelectedListener = (OnContactSelectedListener) getActivity();
+            mOnAddContactListener = (OnAddContactListener) getActivity();
         }catch (Exception e){
             Log.d(TAG, "onAttach: "+e.getMessage());
         }

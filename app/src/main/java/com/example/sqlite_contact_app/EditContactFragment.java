@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -57,6 +58,10 @@ public class EditContactFragment extends Fragment implements ChangePhotoDialog.O
         mEmail = (EditText) view.findViewById(R.id.etContactEmail);
         mContactImage = (CircleImageView) view.findViewById(R.id.contactImage);
         mSelectedDevice = (Spinner) view.findViewById(R.id.selectDevice);
+
+        //set the heading for the toolbar
+        TextView heading = (TextView) view.findViewById(R.id.textContactToolbar);
+        heading.setText(getString(R.string.edit_contact));
 
         //Required For Setting up the toolbar
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);

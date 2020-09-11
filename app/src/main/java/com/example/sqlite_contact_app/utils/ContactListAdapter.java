@@ -13,10 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentTransaction;
-
-import com.example.sqlite_contact_app.ContactFragment;
-import com.example.sqlite_contact_app.EditContactFragment;
 import com.example.sqlite_contact_app.R;
 import com.example.sqlite_contact_app.models.Contact;
 import com.nostra13.universalimageloader.core.ImageLoader;
