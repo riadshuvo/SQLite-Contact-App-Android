@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.sqlite_contact_app"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -36,5 +36,8 @@ dependencies {
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //Dependency for Formatting Phone Number with Country Code and Country Flag
+    implementation 'com.github.tfcporciuncula:phonemoji:1.0.0'
 
 }

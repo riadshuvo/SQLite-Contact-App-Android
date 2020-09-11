@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -35,9 +36,9 @@
                     android:id="@+id/contactImage"
                     android:layout_width="200dp"
                     android:layout_height="200dp"
-                    android:src="@drawable/ic_android"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="40dp"
+                    android:src="@drawable/ic_android"
                     app:civ_border_color="@color/black"
                     app:civ_border_width="1dp" />
 
@@ -96,17 +97,40 @@
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_phone_grey" />
 
-                <EditText
-                    android:id="@+id/etContactPhone"
+                <!--                <EditText-->
+                <!--                    android:id="@+id/etContactPhone"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_centerVertical="true"-->
+                <!--                    android:layout_marginStart="20dp"-->
+                <!--                    android:layout_marginLeft="20dp"-->
+                <!--                    android:layout_toRightOf="@+id/ivPhone"-->
+                <!--                    android:inputType="phone"-->
+                <!--                    android:textColor="@color/black"-->
+                <!--                    android:textSize="16sp" />-->
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="20dp"
-                    android:layout_marginLeft="20dp"
                     android:layout_toRightOf="@+id/ivPhone"
-                    android:inputType="textNoSuggestions"
-                    android:textColor="@color/black"
-                    android:textSize="16sp" />
+                    android:orientation="horizontal">
+
+                    <com.tfcporciuncula.phonemoji.PhonemojiFlagTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="16sp"
+                        app:phonemoji_flagFor="@id/etContactPhone" />
+
+                    <com.tfcporciuncula.phonemoji.PhonemojiTextInputEditText
+                        android:id="@+id/etContactPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:phonemoji_initialRegionCode="BD" />
+
+                </LinearLayout>
 
                 <Spinner
                     android:id="@+id/selectDevice"
@@ -120,7 +144,8 @@
                     android:layout_marginTop="50dp"
                     android:entries="@array/device_options"
                     android:textColor="@color/black"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    tools:ignore="NotSibling" />
 
             </RelativeLayout>
 
@@ -146,7 +171,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginLeft="20dp"
                     android:layout_toRightOf="@+id/ivEmail"
-                    android:inputType="textNoSuggestions"
+                    android:inputType="textEmailAddress"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
 
