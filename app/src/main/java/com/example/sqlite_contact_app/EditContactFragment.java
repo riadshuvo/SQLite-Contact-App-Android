@@ -1,5 +1,6 @@
 package com.example.sqlite_contact_app;
 
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -90,14 +92,43 @@ public class EditContactFragment extends Fragment implements ChangePhotoDialog.O
             }
         });
 
-        //Save Changes to the Contact Database
-        ImageView ivCheckBox = (ImageView) view.findViewById(R.id.ivCheckMark);
-        ivCheckBox.setOnClickListener(new View.OnClickListener() {
+        // save changes to the contact
+        ImageView ivCheckMark = (ImageView) view.findViewById(R.id.ivCheckMark);
+        ivCheckMark.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Log.d(TAG, "onClick: saving the edited contact");
-                //Execute the save method for database
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: saving the edited contact.");
+                //execute the save method for the database
 
+                if(checkStringIfNull(mName.getText().toString())){
+                    Log.d(TAG, "onClick: saving changes to the contact: " + mName.getText().toString());
+
+                    //get the database helper and save the contact
+                    DatabaseHelper databaseHelper = new DatabaseHelper(getActivity());
+                    Cursor cursor = databaseHelper.getContactID(mContact);
+
+                    int contactID = -1;
+                    while(cursor.moveToNext()){
+                        contactID = cursor.getInt(0); //getting the Database Id From #COL0
+                    }
+                    if(contactID > -1){
+                        if(mSelectedImagePath != null){
+                            mContact.setProfileImage(mSelectedImagePath);
+                        }
+                        mContact.setName(mName.getText().toString());
+                        mContact.setPhonenumber(mPhoneNumber.getText().toString());
+                        mContact.setDevice(mSelectedDevice.getSelectedItem().toString());
+                        mContact.setEmail(mEmail.getText().toString());
+
+                        databaseHelper.updateContact(mContact, contactID);
+                        Toast.makeText(getActivity(), "Contact Updated", Toast.LENGTH_SHORT).show();
+
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                    else{
+                        Toast.makeText(getActivity(), "Database Error", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         });
 
@@ -140,11 +171,19 @@ public class EditContactFragment extends Fragment implements ChangePhotoDialog.O
         return view;
     }
 
+    private boolean checkStringIfNull(String string){
+        if(string.equals("")){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
     private void init(){
         mName.setText(mContact.getName());
         mPhoneNumber.setText(mContact.getPhonenumber());
         mEmail.setText(mContact.getEmail());
-        UniversalImageLoader.setImage(mContact.getProfileImage(), mContactImage, null, "http://");
+        UniversalImageLoader.setImage(mContact.getProfileImage(), mContactImage, null, "");
 
         //Setting the selected device to the Spinner
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
@@ -171,9 +210,32 @@ public class EditContactFragment extends Fragment implements ChangePhotoDialog.O
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menuitem_delete:
                 Log.d(TAG, "onOptionsItemSelected: deleting contacts");
+
+                DatabaseHelper databaseHelper = new DatabaseHelper(getActivity());
+                Cursor cursor = databaseHelper.getContactID(mContact);
+
+                int contactID = -1;
+                while (cursor.moveToNext()) {
+                    contactID = cursor.getInt(0); //getting the Database Id From #COL0
+                }
+                if (contactID > -1) {
+                    if (databaseHelper.deleteContact(contactID) > 0) {
+                        Toast.makeText(getActivity(), "Contact Deleted", Toast.LENGTH_SHORT).show();
+
+                        //clear the arguments ont he current bundle since the contact is deleted
+                        this.getArguments().clear();
+
+                        //remove previous fragemnt from the backstack (therefore navigating back)
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    } else {
+                        Toast.makeText(getActivity(), "Database Error", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -198,15 +260,17 @@ public class EditContactFragment extends Fragment implements ChangePhotoDialog.O
     /**
      * Retrieves the selected image from the Bundle coming from ChangePhotoDialog By Taking Snapshot
      * @param bitmap
+     * @param imagePath
      */
     @Override
-    public void getBitmapImage(Bitmap bitmap) {
+    public void getBitmapImage(Bitmap bitmap, String imagePath) {
         Log.d(TAG, "getBitmapImage: got the bitmap: " + bitmap);
         //get the bitmap from 'ChangePhotoDialog'
         if(bitmap != null) {
             //compress the image (if you like)
             ((MainActivity)getActivity()).compressBitmap(bitmap, 70);
             mContactImage.setImageBitmap(bitmap);
+            mSelectedImagePath = imagePath;
         }
 
     }
@@ -217,7 +281,7 @@ public class EditContactFragment extends Fragment implements ChangePhotoDialog.O
      */
     @Override
     public void getImagePath(String imagePath) {
-        Log.d(TAG, "getImagePath: got the image path: " + imagePath);
+        Log.d(TAG, "ImagePath: got the image path: " + imagePath);
 
         if( !imagePath.equals("")){
             imagePath = imagePath.replace(":/", "://");

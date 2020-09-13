@@ -1,45 +1,42 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:layout_height="50dp"
-        android:layout_width="match_parent"
         android:id="@+id/searchToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:background="@drawable/grey_border_bottom">
 
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <ImageView
+                    android:id="@+id/ivBackArrow"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_marginEnd="15dp"
-                    android:id="@+id/ivBackArrow"
-                    android:src="@drawable/ic_backarrow_teal"
-                    android:layout_marginRight="15dp" />
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/ic_backarrow_teal" />
 
                 <EditText
+                    android:id="@+id/etSearchContacts"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/ivBackArrow"
+                    android:background="@null"
                     android:hint="Find Contacts"
                     android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:background="@null"
-                    android:id="@+id/etSearchContacts"
-                    android:layout_toRightOf="@+id/ivBackArrow"/>
+                    android:textSize="20sp" />
 
 
             </RelativeLayout>
 
 
         </androidx.appcompat.widget.Toolbar>
-
 
 
     </com.google.android.material.appbar.AppBarLayout>

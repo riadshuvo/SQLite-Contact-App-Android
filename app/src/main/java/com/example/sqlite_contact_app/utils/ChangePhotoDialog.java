@@ -3,6 +3,7 @@ package com.example.sqlite_contact_app.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,16 +18,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.sqlite_contact_app.ContactFragment;
 import com.example.sqlite_contact_app.R;
 
 import java.io.File;
 
+import static android.provider.MediaStore.*;
+
 public class ChangePhotoDialog extends DialogFragment {
     private static final String TAG = "ChangePhotoDialog";
 
-    public interface OnPhotoReceivedListener{
-        public void getBitmapImage(Bitmap bitmap);
+    public interface OnPhotoReceivedListener {
+        public void getBitmapImage(Bitmap bitmap, String imagePath);
+
         public void getImagePath(String imagePath);
     }
 
@@ -43,7 +46,7 @@ public class ChangePhotoDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: starting camera.");
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                Intent cameraIntent = new Intent(ACTION_IMAGE_CAPTURE);
                 startActivityForResult(cameraIntent, Init.CAMERA_REQUEST_CODE);
 
             }
@@ -79,6 +82,7 @@ public class ChangePhotoDialog extends DialogFragment {
      * Must have to Override onAttach() method to avoid
      * Attempt to invoke interface method 'OnEditContactListener.onEditContactSelected()'
      * on a null object reference
+     *
      * @param context
      */
     @Override
@@ -89,8 +93,8 @@ public class ChangePhotoDialog extends DialogFragment {
              * Sending the image bitmap Fragment(ChangePhotoDialog) to Fragment(EditContactFragment) throw the Interface
              */
             mOnPhotoReceived = (OnPhotoReceivedListener) getTargetFragment();
-        }catch (Exception e){
-            Log.d(TAG, "onAttach: "+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "onAttach: " + e.getMessage());
         }
     }
 
@@ -99,24 +103,31 @@ public class ChangePhotoDialog extends DialogFragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         /**
-        Results when taking a new image with camera
+         Results when taking a new image with camera
          */
-        if(requestCode == Init.CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+        if (requestCode == Init.CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             Log.d(TAG, "onActivityResult: done taking a picture.");
 
             //get the new image bitmap
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
             Log.d(TAG, "onActivityResult: receieved bitmap: " + bitmap);
 
+            //Get Image Path For Loading Captured Image Into Universal Image Loader
+            String photoPath = MediaStore.Images.Media.insertImage(
+                    getActivity().getContentResolver(),
+                    bitmap, "Img" + ".jpeg",
+                    null);
+            Log.d(TAG, "ImagePath: " + photoPath);
+
             //send the bitmap and fragment to the interface
-            mOnPhotoReceived.getBitmapImage(bitmap);
+            mOnPhotoReceived.getBitmapImage(bitmap, photoPath);
             getDialog().dismiss();
         }
 
                 /*
         Results when selecting new image from phone memory
          */
-        if(requestCode == Init.PICKFILE_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+        if (requestCode == Init.PICKFILE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             Uri selectedImageUri = data.getData();
             File file = new File(selectedImageUri.toString());
             Log.d(TAG, "onActivityResult: images: " + file.getPath());
@@ -128,4 +139,5 @@ public class ChangePhotoDialog extends DialogFragment {
 
         }
     }
+
 }
